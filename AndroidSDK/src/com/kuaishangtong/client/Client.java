@@ -71,10 +71,10 @@ public class Client extends Object {
 		return this.server;
 	}
 	
-	public int getSysInfo(int type) {
+	public int getSysInfo(Person person) {
 		int ret = Constants.RETURN_SUCCESS;
 		
-		JSONObject result = getClientService().clientGetSysInfo(type);			
+		JSONObject result = getClientService().clientGetSysInfo(person.getPassType());			
 		if (!result.getBoolean(Constants.SUCCESS)) {
 			ret = result.getIntValue(Constants.ERROR_CODE);
 			super.setLastErr(result.getString(Constants.ERROR));

@@ -21,17 +21,10 @@ public class MainActivity extends Activity {
 			@Override
 			public void run() {
 				Client client;
-				int ret = -1;
 				
 				// Create server
 				client = new Client("65e02ffc45b0d01bd09fa3e0e9fe1b14", "65e02ffc45b0d01bd09fa3e0e9fe1b14");
 				client.setServer("192.168.1.253", 11638, "1", Constants.TEXT_DEPENDENT);
-								
-				if ((ret = client.getSysInfo(Constants.VOICEPRINT_TYPE_RANDOM_DIGITS)) != Constants.RETURN_SUCCESS) {
-					System.err.println(client.getLastErr()+":"+String.valueOf(ret));			
-				}
-				
-				System.out.print("hello world");
 			}
 		}).start();
 	}
