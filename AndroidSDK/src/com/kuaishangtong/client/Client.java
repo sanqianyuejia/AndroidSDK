@@ -18,7 +18,6 @@ public class Client extends Object {
 	private String key;
 	private String secret;
 	private String version;
-	private int type;
 	private int reg_steps;
 	private int ver_steps;
 	private String server;
@@ -57,10 +56,8 @@ public class Client extends Object {
 	 * @param port
 	 * @return
 	 */
-	public synchronized int setServer(String host, int port, String version,
-			int type) {
+	public synchronized int setServer(String host, int port, String version) {
 		this.version = version;
-		this.type = type;
 		this.server = "http://" + host + ":" + String.valueOf(port) + "/"
 				+ this.version;
 
@@ -135,7 +132,7 @@ public class Client extends Object {
 		if (!person.getId().isEmpty()) {
 			JSONObject result = getClientService().clientVerifyVoiceprint(
 					person.getId(), person.getName(), speech.getCodec(), speech.getSampleRate(),
-					speech.getVerify(), speech.getRule(), speech.getData());
+					speech.getVerify(), speech.getRule(), speech.getData(), person.getPassType());
 
 			if (!result.getBoolean(Constants.SUCCESS)) {
 				ret = result.getIntValue(Constants.ERROR_CODE);
@@ -159,7 +156,7 @@ public class Client extends Object {
 		int ret = Constants.RETURN_SUCCESS;
 
 		JSONObject result = getClientService().clientIdentifyVoiceprint(person.getId(),
-				speech.getCodec(), speech.getSampleRate(), speech.getData());
+				speech.getCodec(), speech.getSampleRate(), speech.getData(), person.getPassType());
 
 		if (!result.getBoolean(Constants.SUCCESS)) {
 			ret = result.getIntValue(Constants.ERROR_CODE);
@@ -180,7 +177,7 @@ public class Client extends Object {
 		int ret = Constants.RETURN_SUCCESS;
 
 		JSONObject result = getClientService().clientIdentifyVoiceprint_2(person.getId(),
-				speech.getCodec(),speech.getSampleRate(), speech.getVerify(), speech.getRule(), speech.getData());
+				speech.getCodec(),speech.getSampleRate(), speech.getVerify(), speech.getRule(), speech.getData(), person.getPassType());
 
 		if (!result.getBoolean(Constants.SUCCESS)) {
 			ret = result.getIntValue(Constants.ERROR_CODE);
@@ -274,9 +271,6 @@ public class Client extends Object {
 		this.secret = secret;
 	}
 
-	public void setType(int type) {
-		this.type = type;
-	}
 	
 	private void setRegSteps(int steps) {
 		this.reg_steps = steps;
@@ -286,13 +280,4 @@ public class Client extends Object {
 		this.ver_steps = steps;
 	}
 
-	public String getType() {
-		if (this.type == Constants.TEXT_INDEPENDENT) {
-			return Constants.TEXT_INDEPENDENT_STR;
-		} else if (this.type == Constants.TEXT_PROMPT) {
-			return Constants.TEXT_PROMPT_STR;
-		} else {
-			return Constants.TEXT_DEPENDENT_STR;
-		}
-	}
 }

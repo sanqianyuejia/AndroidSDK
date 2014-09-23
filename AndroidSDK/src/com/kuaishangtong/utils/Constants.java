@@ -1,17 +1,9 @@
 package com.kuaishangtong.utils;
 
-public class Constants {
-	public static final int TEXT_DEPENDENT = 0;
-	public static final int TEXT_INDEPENDENT = 1;
-	public static final int TEXT_PROMPT = 2;	
-	
+public class Constants {	
 	public static final int VOICEPRINT_TYPE_RANDOM_DIGITS = 0;
 	public static final int VOICEPRINT_TYPE_FIXED_TEXT = 1;
 	public static final int VOICEPRINT_TYPE_RANDOM_TEXT = 2;
-	
-	public static final String TEXT_DEPENDENT_STR = "dependent";
-	public static final String TEXT_INDEPENDENT_STR = "independent";
-	public static final String TEXT_PROMPT_STR = "prompt";
 	
 	public static final int RETURN_SUCCESS = 0;
 	public static final int RETURN_FAIL = 1;

@@ -63,7 +63,7 @@ public class PersonService extends BaseService {
 		return tokenJson;
 	}
 	
-	public JSONObject personAddSpeech(String id, String name, String codec, int sr, boolean bVerify, String rule, byte[] data) {
+	public JSONObject personAddSpeech(String id, String name, String codec, int sr, boolean bVerify, String rule, byte[] data, int passtype) {
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put(Constants.API_KEY, super.getClient().getKey());
 		parameters.put(Constants.API_SECRET, super.getClient().getSecret());
@@ -73,6 +73,7 @@ public class PersonService extends BaseService {
 		parameters.put(Constants.SAMPLERATE, String.valueOf(sr));
 		parameters.put(Constants.VERIFY, String.valueOf(bVerify));
 		parameters.put(Constants.SPEECH_RULE, rule);
+		parameters.put(Constants.PASSTYPE, String.valueOf(passtype));
 		
 		
 		String tokenResult = HttpURLUtils.doUploadFile(super.getClient().getServerString()+Constants.URL_SPEECH_ADD, parameters, 

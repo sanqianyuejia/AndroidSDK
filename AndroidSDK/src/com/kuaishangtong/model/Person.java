@@ -267,7 +267,7 @@ public class Person extends Object {
 		
 		if (!this.id.isEmpty()) {
 			JSONObject result = getPersonService().personAddSpeech(this.id, this.name, speech.getCodec(), 
-					speech.getSampleRate(), speech.getVerify(), speech.getRule(), speech.getData());
+					speech.getSampleRate(), speech.getVerify(), speech.getRule(), speech.getData(), this.passtype);
 			
 			if (!result.getBoolean(Constants.SUCCESS)) {
 				ret = result.getIntValue(Constants.ERROR_CODE);
