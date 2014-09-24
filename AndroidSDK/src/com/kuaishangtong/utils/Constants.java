@@ -76,6 +76,7 @@ public class Constants {
     public static final String URL_PERSON_FIND_ALL = "/person/find_all.json";
     public static final String URL_PERSON_FIND_LOGS = "/person/find_logs.json";
     public static final String URL_PERSON_GET_AUHCODE = "/person/getauthcode.json";
+    public static final String URL_PERSON_GET_IDENTIFY_AUHCODE = "/person/getidentifycode.json";
     
     public static final String URL_SPEECH_ADD = "/speech/add.json";
     public static final String URL_SPEECH_FIND = "/speech/find.json";

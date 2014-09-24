@@ -197,6 +197,28 @@ public class Person extends Object {
 		return ret;
 	}
 	
+	public int getIdentifyAuthCode() {
+		int ret = Constants.RETURN_SUCCESS;
+		
+		if (!this.id.isEmpty()) {
+			JSONObject result = getPersonService().personGetIdentifyAuthCode(this.passtype);
+			
+			if (!result.getBoolean(Constants.SUCCESS)) {
+				ret = result.getIntValue(Constants.ERROR_CODE);
+				super.setLastErr(result.getString(Constants.ERROR));
+				super.setErrCode(result.getIntValue(Constants.ERROR_CODE));
+			} else {
+					this.setAuthCodeString(result.getString(Constants.AUTHCODE));
+			}
+		} else {		
+			ret = Constants.LOCAL_ID_NULL;
+			super.setLastErr("id is empty");
+			super.setErrCode(0);
+		}		
+		
+		return ret;
+	}  
+	
 	@Deprecated
 	public List<Speech> getSpeeches() {
 		List<Speech> speechList = new ArrayList<Speech>();
