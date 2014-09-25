@@ -117,6 +117,35 @@ public class Client extends Object {
 
 		return personList;
 	}
+	
+	public List<Person> personFindGroup(int limit, String id) {
+		List<Person> personList = new ArrayList<Person>();
+		int ret = Constants.RETURN_SUCCESS;
+
+		JSONObject result = getClientService().personFindGroup(limit, id);
+
+		if (!result.getBoolean(Constants.SUCCESS)) {
+			ret = result.getIntValue(Constants.ERROR_CODE);
+			super.setLastErr(result.getString(Constants.ERROR));
+			super.setErrCode(ret);
+		} else {
+			JSONArray persons = (JSONArray) result.getJSONArray("person");
+			// Iterator<JSONObject> it = persons.iterator();
+			Iterator<java.lang.Object> it = persons.iterator();
+			while (it.hasNext()) {
+				JSONObject object = (JSONObject) it.next();
+				Person person = new Person(this); 
+				person.setId(object.getString(Constants.IDENTY));
+				person.setName(object.getString(Constants.NAME));
+				person.setTag(object.getString(Constants.TAG));
+				person.setFlag(object.getBoolean(Constants.FLAG));
+
+				personList.add(person);
+			}
+		}
+
+		return personList;
+	}
 
 	/**
 	 * Verify speaker's voiceprint
