@@ -118,7 +118,7 @@ public class Client extends Object {
 		return personList;
 	}
 	
-	public List<Person> personFindGroup(int limit, String id) {
+	public List<Person> getGroup(int limit, String id) {
 		List<Person> personList = new ArrayList<Person>();
 		int ret = Constants.RETURN_SUCCESS;
 
