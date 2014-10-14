@@ -73,6 +73,7 @@ public class Constants {
     public static final String URL_PERSON_CREATE = "/person/create.json";
     public static final String URL_PERSON_DELETE = "/person/delete.json";
     public static final String URL_PERSON_GETINFO = "/person/find.json";
+    public static final String URL_PERSON_SETINFO = "/person/set_info.json";
     public static final String URL_PERSON_FIND_ALL = "/person/find_all.json";
     public static final String URL_PERSON_FIND_GROUP = "/person/find_group.json";
     public static final String URL_PERSON_FIND_LOGS = "/person/find_logs.json";

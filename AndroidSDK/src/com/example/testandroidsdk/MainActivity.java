@@ -1,8 +1,10 @@
 package com.example.testandroidsdk;
 
-import com.kuaishangtong.recorder.OnImplSpeechListener;
+import com.kuaishangtong.client.Client;
+import com.kuaishangtong.model.Person;
 import com.kuaishangtong.recorder.RecordBufferThread;
 import com.kuaishangtong.recorder.RecorderThread;
+import com.kuaishangtong.utils.Constants;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -20,6 +22,9 @@ public class MainActivity extends Activity {
 	TextView infoText 						= null;
 	RecorderThread recorderThread 			= null;
 	RecordBufferThread recordBufferThread 	= null;
+	
+	Client client = null;
+	Person person = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,8 +32,12 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		btnRecorder = (Button) findViewById(R.id.recorder);
-		infoText = (TextView) findViewById(R.id.infotext);
 		btnRecorder.setOnTouchListener(touchListener);	
+		
+		client = new Client("110832a5a394a7df7e5691a746c61b7c", "110832a5a394a7df7e5691a746c61b7c");
+		client.setServer("114.215.103.99",11638,"1");		
+		person = new Person(client, "dddddd", "dddddd");
+		person.setPassType(Constants.VOICEPRINT_TYPE_RANDOM_DIGITS);		
 	}
 
 	@Override
@@ -45,50 +54,34 @@ public class MainActivity extends Activity {
 		public boolean onTouch(View v, MotionEvent event) {
 			if (v.getId() == R.id.recorder) {
 				if (event.getAction() == MotionEvent.ACTION_UP) {
-					Log.d(this.getClass().toString(), "stop record");
-					recordBufferThread.stopDetection();
-					recordBufferThread.getRecordBuffer();
-					
-//					OutputStream os;
-//					try {
-//						os = new FileOutputStream(new File("/sdcard/Android/" + "speech.pcm"));
-//						os.write(Shorts2Bytes(recordBufferThread.getRecordBuffer())); 
-//						os.close(); 
-//					} catch (FileNotFoundException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					} catch (IOException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					} 
+					Log.d(this.getClass().toString(), "stop record");			
 				} else  if (event.getAction() == MotionEvent.ACTION_DOWN){
 					Log.d(this.getClass().toString(), "start record...");
-					recordBufferThread = new RecordBufferThread(new RecorderThread());
-					recordBufferThread.setOnImplSpeechListener(speechListener);
-					recordBufferThread.start();
+					new  Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							try {
+								if (client.getSysInfo(person) != Constants.RETURN_SUCCESS) {
+									Log.e("------------", client.getLastErr()+":"+client.getErrCode());
+								} else {
+									Log.d("------------", "OK.");
+								}
+								
+								if (person.getInfo() != Constants.RETURN_SUCCESS) {
+									Log.e("------------", person.getLastErr()+":"+person.getErrCode());
+								} else {
+									Log.d("------------", "OK.");
+								}
+							} catch (Exception e) {
+								Log.e("------------", e.getMessage());
+							}
+						}
+					}).start();
 				}
 			}
 			
 			return false;
 		}
 	};
-	
-	OnImplSpeechListener speechListener = new OnImplSpeechListener() {
-		
-		@Override
-		public void onSoundDetected(int vol) {
-			setVolumeIcon(vol);
-		}
-	};
-	
-	public void setVolumeIcon(int vol) {
-		final int v = vol;
-		this.infoText.post(new Runnable() {			
-			@Override
-			public void run() {
-				infoText.setText("“Ù¡ø:"+v);
-			}
-		});
-	}
-
 }

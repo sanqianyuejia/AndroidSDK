@@ -145,6 +145,26 @@ public class Person extends Object {
 		return ret;
 	}
 	
+	public int setInfo() {
+		int ret = Constants.RETURN_SUCCESS;
+		
+		if (!this.id.isEmpty()) {
+			JSONObject result = getPersonService().personSetInfo(this.id, this.name, this.tag);			
+			
+			if (!result.getBoolean(Constants.SUCCESS)) {
+				ret = result.getIntValue(Constants.ERROR_CODE);
+				super.setLastErr(result.getString(Constants.ERROR));
+				super.setErrCode(result.getIntValue(Constants.ERROR_CODE));
+			}
+		} else {		
+			ret = Constants.LOCAL_ID_NULL;
+			super.setLastErr("id is empty");
+			super.setErrCode(0);
+		}		
+		
+		return ret;
+	}
+	
 	public int getInfo() {
 		int ret = Constants.RETURN_SUCCESS;
 		
