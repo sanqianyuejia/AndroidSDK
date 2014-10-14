@@ -138,6 +138,7 @@ public class Client extends Object {
 				person.setName(object.getString(Constants.NAME));
 				person.setTag(object.getString(Constants.TAG));
 				person.setFlag(object.getBoolean(Constants.FLAG));
+				person.setPassType(object.getIntValue(Constants.TYPE));
 
 				personList.add(person);
 			}
