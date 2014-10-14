@@ -64,6 +64,7 @@ public class Constants {
 	public static final String MATCH = "match";
 	public static final String SCORE = "score";
 	public static final String PASSTYPE = "passtype";
+	public static final String TYPE = "type";
 	public static final String STEP = "step";
 	public static final String RSTEPS = "rnumber";
 	public static final String VSTEPS = "vnumber";

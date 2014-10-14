@@ -184,6 +184,7 @@ public class Person extends Object {
 					this.setFlag(p.getBoolean(Constants.FLAG));
 					this.setStep(p.getIntValue(Constants.STEP));
 					this.setTag(p.getString(Constants.TAG));
+					this.setPassType(p.getIntValue(Constants.TYPE));
 				}
 			}
 		} else {		
