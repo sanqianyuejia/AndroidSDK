@@ -25,122 +25,121 @@
 
 ## 开发示例——注册说话人声纹
 
-//1.初始化
-private Client client=null;    
-private Person person=null;
-private Speech speech=null;
-private VPRService vservice=null;
+    //1.初始化
+    private Client client=null;    
+    private Person person=null;
+    private Speech speech=null;
+    private VPRService vservice=null;
 
-//初始化
-client = new Client(clientKey,clientSecret);
-client.setServer(serverHost,serverPort,serverVersion);
+    //初始化
+    client = new Client(clientKey,clientSecret);
+    client.setServer(serverHost,serverPort,serverVersion);
 
-person = new Person(client, group_id, username); 
-person.setPassType(keyway); // 随机数字口令
+    person = new Person(client, group_id, username); 
+    person.setPassType(keyway); // 随机数字口令
 
-speech = new Speech("pcm/raw", 16000, true);
+    speech = new Speech("pcm/raw", 16000, true);
 
-// 获取服务实例
-this.vservice=VPRService.getInstance();
+    // 获取服务实例
+    this.vservice=VPRService.getInstance();
 
-//2.参数设置
-// 设置服务参数
-this.vservice.setServiceParam(client, person, speech);
+    //2.参数设置
+    // 设置服务参数
+    this.vservice.setServiceParam(client, person, speech);
 
-// 设置录音回调接口
-this.vservice.setRecorderListener(recorderListener);
+    // 设置录音回调接口
+    this.vservice.setRecorderListener(recorderListener);
 
-// 设置声纹服务回调接口
-this.vservice.setVPRListener(vprListener);
+    //设置声纹服务回调接口
+    this.vservice.setVPRListener(vprListener);
 
-// 初始化声纹服务，serviceMode可为VPRService.REGISTER、VPRService.VERIFY和VPRService.IDENTIFY
-this.vservice.initService(serviceMode);
+    // 初始化声纹服务，serviceMode可为VPRService.REGISTER、VPRService.VERIFY和VPRService.IDENTIFY
+    this.vservice.initService(serviceMode);
 
-//3.接口函数实现
-// 声纹服务接口函数实现
-private VPRListener vprListener =new VPRListener(){
+    //3.接口函数实现
+    // 声纹服务接口函数实现
+    private VPRListener vprListener =new VPRListener(){
 
-@Override
-//初始化声纹服务
-public void onServiceInit(boolean flag,int stepNum,int statusNum,     String keyString) {
-//当flag为true，此处提示用户初始朗读的口令keyString和服务所需步数statusNum
-//（在VPRService.REGISTER服务模式下，可提示当前进度步数stepNum）
-}
+        @Override
+        //初始化声纹服务
+        public void onServiceInit(boolean flag,int stepNum,int statusNum, String keyString) {
+            //当flag为true，此处提示用户初始朗读的口令keyString和服务所需步数statusNum
+            //（在VPRService.REGISTER服务模式下，可提示当前进度步数stepNum）
+        }
 
-@Override
-//录音上传结果
-public void onSpeechResult(boolean flag) {
-//当flag为false，可提示用户口令朗读错误
-}
+        @Override
+        //录音上传结果
+        public void onSpeechResult(boolean flag) {
+            //当flag为false，可提示用户口令朗读错误
+        }
 
-@Override
-//服务结果回调
-public void onServiceEnd(boolean flag, Person person, double      similarity) {
-//当flag为false，可提示用户验证失败
-//当flag为true，可提示用户进行下一步操作，如跳转
-//(在VPRService.IDENTIFY服务模式下，可提示识别结果person)
-//similarity可以帮助开发者获取声纹相似度
+        @Override
+        //服务结果回调
+        public void onServiceEnd(boolean flag, Person person, double similarity) {
+            //当flag为false，可提示用户验证失败
+            //当flag为true，可提示用户进行下一步操作，如跳转
+            //(在VPRService.IDENTIFY服务模式下，可提示识别结果person)
+            //similarity可以帮助开发者获取声纹相似度
 
-}
+        }
 
 
-@Override
-//在onSpeechResult和onServiceEnd后被调用，表示当前进度情况
-public void onFlowStepChanged(int stepNum, int statusNum,
-String keyString) {
-//此处可提示用户当前进度步数stepNum，服务总步数statusNum，
-//并刷新当前口令keyString
+        @Override
+        //在onSpeechResult和onServiceEnd后被调用，表示当前进度情况
+        public void onFlowStepChanged(int stepNum, int statusNum, String keyString) {
+            //此处可提示用户当前进度步数stepNum，服务总步数statusNum，
+            //并刷新当前口令keyString
 
-}
+        }
 
-@Override
-//服务出错
-public void onServiceError(VPRError error) {
-//此处可打印声纹服务的一些错误，例如口令，网络连接等。
-Log.d("ServiceError",error.getErrorStr());
-}
+        @Override
+        //服务出错
+        public void onServiceError(VPRError error) {
+            //此处可打印声纹服务的一些错误，例如口令，网络连接等。
+            Log.d("ServiceError",error.getErrorStr());
+        }
 
-};
+    };
 
-// 录音接口函数实现
-private RecorderListener recorderListener =new RecorderListener(){
+    // 录音接口函数实现
+    private RecorderListener recorderListener =new RecorderListener(){
 
-// 录音开始时调用
-@Override    
-public void onRecordBegin() {
-// 此处显示录音启动图标，提示用户开始录音
-}
+        // 录音开始时调用
+        @Override    
+        public void onRecordBegin() {
+            // 此处显示录音启动图标，提示用户开始录音
+        }
 
-// 返回实时录音音量，soud为音量大小，取值范围为0-2^15（32768）
-@Override    
-public void onSoundChanged(final float sound) {
-// 此处显示实时音量图标，提示用户音量大小变化 
-}
+        // 返回实时录音音量，soud为音量大小，取值范围为0-2^15（32768）
+        @Override    
+        public void onSoundChanged(final float sound) {
+            // 此处显示实时音量图标，提示用户音量大小变化 
+        }
 
-// 录音结束时调用，并可在此处开启声纹服务
-@Override
-public void onRecordEnd() {
-// 此处提示用户录音结束
+        // 录音结束时调用，并可在此处开启声纹服务
+        @Override
+        public void onRecordEnd() {
+            // 此处提示用户录音结束
 
-// 可在此处开启声纹服务
-vservice.startService();
-}
+            // 可在此处开启声纹服务
+            vservice.startService();
+        }
 
-// 录音异常时调用
-@Override
-public void onRecordError(VPRError error) {
-// 此处可打印录音服务异常
-Log.d(“RecordError",error.getErrorStr());
-} 
+        // 录音异常时调用
+        @Override
+        public void onRecordError(VPRError error) {
+            // 此处可打印录音服务异常
+            Log.d(“RecordError",error.getErrorStr());
+        } 
 
-};
+    };
 
-//4.功能使用
-//开始录音
-vservice.startRecord();
+    //4.功能使用
+    //开始录音
+    vservice.startRecord();
 
-//停止录音，并在它的回调函数onRecordEnd()中启动声纹服务vservice.startService()
-vservice.stopRecord();
+    //停止录音，并在它的回调函数onRecordEnd()中启动声纹服务vservice.startService()
+    vservice.stopRecord();
 
 ## 错误代码对照表
 <table cellpadding="0" cellspacing="1" border="0" style="width:100%" class="tableborder">
