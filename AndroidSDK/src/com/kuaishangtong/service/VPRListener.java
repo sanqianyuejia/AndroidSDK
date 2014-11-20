@@ -4,18 +4,18 @@ import com.kuaishangtong.model.Person;
 import com.kuaishangtong.model.VPRError;
 
 public interface VPRListener {
-	// ³õÊ¼»¯·şÎñ
+	// åˆå§‹åŒ–æœåŠ¡
 	public void onServiceInit(boolean flag,int stepNum,int statusNum,String keyString);
 	
-	//ÓïÒôÉÏ´«½á¹û
+	//è¯­éŸ³ä¸Šä¼ ç»“æœ
 	public void onSpeechResult(boolean flag);
 	
-	//·şÎñ½áÊø
+	//æœåŠ¡ç»“æŸ
 	public void onServiceEnd(boolean flag,Person person,double similarity);
 	
-	//·şÎñËùĞè²½Öè
+	//æœåŠ¡æ‰€éœ€æ­¥éª¤
 	public void onFlowStepChanged(int stepNum,int statusNum,String keyString);
 	
-	//·şÎñ´íÎó
+	//æœåŠ¡é”™è¯¯
 	public void onServiceError(VPRError error);
 }

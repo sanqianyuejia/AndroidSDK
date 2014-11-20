@@ -17,11 +17,11 @@ import android.util.Log;
 public class FileService {
 	private Context context;
 	 
-	/** SD¿¨ÊÇ·ñ´æÔÚ**/ 
+	/** SDå¡æ˜¯å¦å­˜åœ¨**/ 
 	private boolean hasSD = false; 
-	/** SD¿¨µÄÂ·¾¶**/ 
+	/** SDå¡çš„è·¯å¾„**/ 
 	private String SDPATH; 
-	/** µ±Ç°³ÌĞò°üµÄÂ·¾¶**/ 
+	/** å½“å‰ç¨‹åºåŒ…çš„è·¯å¾„**/ 
 	private String FILESPATH; 
 	
 	private String MyVoicePrintDir;
@@ -39,9 +39,9 @@ public class FileService {
 	}
 
 	/**
-	 * ½«×Ö·û´®±£´æµ½ÎÄ¼şÖĞ
-	 * @param fileName ÎÄ¼şÃû
-	 * @param fileContent ÎÄ¼şÄÚÈİ
+	 * å°†å­—ç¬¦ä¸²ä¿å­˜åˆ°æ–‡ä»¶ä¸­
+	 * @param fileName æ–‡ä»¶å
+	 * @param fileContent æ–‡ä»¶å†…å®¹
 	 */
 	public void write(String fileName, String fileContent) throws Exception {
 		FileOutputStream stream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
@@ -50,9 +50,9 @@ public class FileService {
 	}
 	
 	/**
-	 * ´ÓÎÄ¼şÖĞ¶ÁÈ¡ÎÄ¼şÄÚÈİ
-	 * @param fileName ÎÄ¼şÃû
-	 * @return ·µ»ØÎÄ¼şÄÚÈİ
+	 * ä»æ–‡ä»¶ä¸­è¯»å–æ–‡ä»¶å†…å®¹
+	 * @param fileName æ–‡ä»¶å
+	 * @return è¿”å›æ–‡ä»¶å†…å®¹
 	 * @throws Exception
 	 */
 	public String read(String fileName) throws Exception {
@@ -83,9 +83,9 @@ public class FileService {
 	}
 	
 	/**
-	 * Ğ´ÎÄ¼şµ½SD¿¨¸ùÄ¿Â¼
-	 * @param FileName ÎÄ¼şÃû
-	 * @param FileContent ÎÄ¼şÄÚÈİ
+	 * å†™æ–‡ä»¶åˆ°SDå¡æ ¹ç›®å½•
+	 * @param FileName æ–‡ä»¶å
+	 * @param FileContent æ–‡ä»¶å†…å®¹
 	 * @throws Exception
 	 */
 	public void writeToSDCard(String FileName, String FileContent) throws Exception {
@@ -97,9 +97,9 @@ public class FileService {
 	}
 	
 	/**
-	 * ¶ÁÎÄ¼ş´ÓSD¿¨¸ùÄ¿Â¼
-	 * @param FileName ÎÄ¼şÃû
-	 * @return ·µ»ØÎÄ¼şÄÚÈİ
+	 * è¯»æ–‡ä»¶ä»SDå¡æ ¹ç›®å½•
+	 * @param FileName æ–‡ä»¶å
+	 * @return è¿”å›æ–‡ä»¶å†…å®¹
 	 * @throws Exception
 	 */
 	public String readFromSDCard(String FileName) throws Exception {			
@@ -122,10 +122,10 @@ public class FileService {
 	
 	
 	public static String SDPATH2 = Environment.getExternalStorageDirectory().getPath()
-            + "/VoicePrintTemp/";//»ñÈ¡ÎÄ¼ş¼Ğ
-    //±£´æÍ¼Æ¬
+            + "/VoicePrintTemp/";//è·å–æ–‡ä»¶å¤¹
+    //ä¿å­˜å›¾ç‰‡
     public static void saveBitmap(Bitmap bm, String picName) {
-        Log.e("", "±£´æÍ¼Æ¬");
+        Log.e("", "ä¿å­˜å›¾ç‰‡");
         Log.d("text", SDPATH2);
         try {
             if (!isFileExist("")) {
@@ -139,7 +139,7 @@ public class FileService {
             bm.compress(Bitmap.CompressFormat.JPEG, 90, out);
             out.flush();
             out.close();
-            Log.e("", "ÒÑ¾­±£´æ");
+            Log.e("", "å·²ç»ä¿å­˜");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -147,14 +147,14 @@ public class FileService {
         }
     }
  
-    //´´½¨ÎÄ¼ş¼Ğ
+    //åˆ›å»ºæ–‡ä»¶å¤¹
     public static File createSDDir(String dirName) throws IOException {
         File dir = new File(SDPATH2 + dirName);
         if (Environment.getExternalStorageState().equals(
                 Environment.MEDIA_MOUNTED)) {
  
         	if (!dir.exists()) {
-                //Èô²»´æÔÚ£¬´´½¨Ä¿Â¼£¬¿ÉÒÔÔÚÓ¦ÓÃÆô¶¯µÄÊ±ºò´´½¨
+                //è‹¥ä¸å­˜åœ¨ï¼Œåˆ›å»ºç›®å½•ï¼Œå¯ä»¥åœ¨åº”ç”¨å¯åŠ¨çš„æ—¶å€™åˆ›å»º
         		dir.mkdirs();
                }
             //System.out.println("createSDDir:" + dir.getAbsolutePath());
@@ -169,7 +169,7 @@ public class FileService {
         return file.exists();
     }
     
-    //É¾³ıÎÄ¼ş
+    //åˆ é™¤æ–‡ä»¶
     public static void delFile(String fileName){
         File file = new File(SDPATH2 + fileName);
         if(file.isFile()){
@@ -178,7 +178,7 @@ public class FileService {
         file.exists();
     }
     
-    //É¾³ıÎÄ¼ş¼ĞºÍÎÄ¼ş¼ĞÀïÃæµÄÎÄ¼ş
+    //åˆ é™¤æ–‡ä»¶å¤¹å’Œæ–‡ä»¶å¤¹é‡Œé¢çš„æ–‡ä»¶
     public static void deleteDir() {
         File dir = new File(SDPATH2);
         if (dir == null || !dir.exists() || !dir.isDirectory())
@@ -186,11 +186,11 @@ public class FileService {
          
         for (File file : dir.listFiles()) {
             if (file.isFile())
-                file.delete(); // É¾³ıËùÓĞÎÄ¼ş
+                file.delete(); // åˆ é™¤æ‰€æœ‰æ–‡ä»¶
             else if (file.isDirectory())
-                deleteDir(file.getPath()); // µİ¹æµÄ·½Ê½É¾³ıÎÄ¼ş¼Ğ
+                deleteDir(file.getPath()); // é€’è§„çš„æ–¹å¼åˆ é™¤æ–‡ä»¶å¤¹
         }
-       // dir.delete();// É¾³ıÄ¿Â¼±¾Éí
+       // dir.delete();// åˆ é™¤ç›®å½•æœ¬èº«
     }
     
     public static void deleteDir(String dirName) {
@@ -200,11 +200,11 @@ public class FileService {
          
         for (File file : dir.listFiles()) {
             if (file.isFile())
-                file.delete(); // É¾³ıËùÓĞÎÄ¼ş
+                file.delete(); // åˆ é™¤æ‰€æœ‰æ–‡ä»¶
             else if (file.isDirectory())
-                deleteDir(dirName); // µİ¹æµÄ·½Ê½É¾³ıÎÄ¼ş¼Ğ
+                deleteDir(dirName); // é€’è§„çš„æ–¹å¼åˆ é™¤æ–‡ä»¶å¤¹
         }
-        dir.delete();// É¾³ıÄ¿Â¼±¾Éí
+        dir.delete();// åˆ é™¤ç›®å½•æœ¬èº«
     }
  
     public static List<File> readWavFile() {
@@ -238,7 +238,7 @@ public class FileService {
     
     
     
-  //´´½¨ÎÄ¼ş¼Ğ
+  //åˆ›å»ºæ–‡ä»¶å¤¹
     public static File createDir(String dirName) throws IOException {
     	String dirpath= Environment.getExternalStorageDirectory().getPath()
         + "/"+dirName+"/";
@@ -247,7 +247,7 @@ public class FileService {
                 Environment.MEDIA_MOUNTED)) {
  
         	if (!dir.exists()) {
-                //Èô²»´æÔÚ£¬´´½¨Ä¿Â¼£¬¿ÉÒÔÔÚÓ¦ÓÃÆô¶¯µÄÊ±ºò´´½¨
+                //è‹¥ä¸å­˜åœ¨ï¼Œåˆ›å»ºç›®å½•ï¼Œå¯ä»¥åœ¨åº”ç”¨å¯åŠ¨çš„æ—¶å€™åˆ›å»º
         		dir.mkdirs();
                }
             //System.out.println("createSDDir:" + dir.getAbsolutePath());
@@ -255,7 +255,7 @@ public class FileService {
         }
         return dir;
     }
-    //É¾³ıÎÄ¼ş¼Ğ¼°ÎÄ¼ş¼ĞÀïÃæµÄÎÄ¼ş
+    //åˆ é™¤æ–‡ä»¶å¤¹åŠæ–‡ä»¶å¤¹é‡Œé¢çš„æ–‡ä»¶
     public static void deleteDir2(String dirpath) {
         File dir = new File(dirpath);
         if (dir == null || !dir.exists() || !dir.isDirectory())
@@ -263,11 +263,11 @@ public class FileService {
          
         for (File file : dir.listFiles()) {
             if (file.isFile())
-                file.delete(); // É¾³ıËùÓĞÎÄ¼ş
+                file.delete(); // åˆ é™¤æ‰€æœ‰æ–‡ä»¶
             else if (file.isDirectory())
-                deleteDir2(file.getPath()); // µİ¹æµÄ·½Ê½É¾³ıÎÄ¼ş¼Ğ
+                deleteDir2(file.getPath()); // é€’è§„çš„æ–¹å¼åˆ é™¤æ–‡ä»¶å¤¹
         }
-        dir.delete();// É¾³ıÄ¿Â¼±¾Éí
+        dir.delete();// åˆ é™¤ç›®å½•æœ¬èº«
     }
     
 }

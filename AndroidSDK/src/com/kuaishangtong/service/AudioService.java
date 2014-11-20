@@ -13,23 +13,23 @@ import android.os.Environment;
 import android.util.Log;
 
 public class AudioService {
-	// ÒôÆµ»ñÈ¡Ô´ 
+	// éŸ³é¢‘è·å–æº 
 
     private int audioSource = MediaRecorder.AudioSource.MIC; 
 
-    // ÉèÖÃÒôÆµ²ÉÑùÂÊ£¬44100ÊÇÄ¿Ç°µÄ±ê×¼£¬µ«ÊÇÄ³Ğ©Éè±¸ÈÔÈ»Ö§³Ö22050£¬16000£¬11025 
+    // è®¾ç½®éŸ³é¢‘é‡‡æ ·ç‡ï¼Œ44100æ˜¯ç›®å‰çš„æ ‡å‡†ï¼Œä½†æ˜¯æŸäº›è®¾å¤‡ä»ç„¶æ”¯æŒ22050ï¼Œ16000ï¼Œ11025 
 
     private static int sampleRateInHz = 16000; 
 
-    // ÉèÖÃÒôÆµµÄÂ¼ÖÆµÄÉùµÀCHANNEL_IN_STEREOÎªË«ÉùµÀ£¬CHANNEL_CONFIGURATION_MONOÎªµ¥ÉùµÀ 
+    // è®¾ç½®éŸ³é¢‘çš„å½•åˆ¶çš„å£°é“CHANNEL_IN_STEREOä¸ºåŒå£°é“ï¼ŒCHANNEL_CONFIGURATION_MONOä¸ºå•å£°é“ 
 
     private static int channelConfig = AudioFormat.CHANNEL_CONFIGURATION_MONO; 
 
-    // ÒôÆµÊı¾İ¸ñÊ½:PCM 16Î»Ã¿¸öÑù±¾¡£±£Ö¤Éè±¸Ö§³Ö¡£PCM 8Î»Ã¿¸öÑù±¾¡£²»Ò»¶¨ÄÜµÃµ½Éè±¸Ö§³Ö¡£ 
+    // éŸ³é¢‘æ•°æ®æ ¼å¼:PCM 16ä½æ¯ä¸ªæ ·æœ¬ã€‚ä¿è¯è®¾å¤‡æ”¯æŒã€‚PCM 8ä½æ¯ä¸ªæ ·æœ¬ã€‚ä¸ä¸€å®šèƒ½å¾—åˆ°è®¾å¤‡æ”¯æŒã€‚ 
 
     private static int audioFormat = AudioFormat.ENCODING_PCM_16BIT; 
 
-    // »º³åÇø×Ö½Ú´óĞ¡  www.2cto.com
+    // ç¼“å†²åŒºå­—èŠ‚å¤§å°  www.2cto.com
 
     private int bufferSizeInBytes = 0; 
     
@@ -38,17 +38,17 @@ public class AudioService {
 
     private AudioRecord audioRecord;
     
-    private boolean isRecord = false;// ÉèÖÃÕıÔÚÂ¼ÖÆµÄ×´Ì¬ 
+    private boolean isRecord = false;// è®¾ç½®æ­£åœ¨å½•åˆ¶çš„çŠ¶æ€ 
 
     
     public static String SDPATH2 = Environment.getExternalStorageDirectory().getPath()
             + "/VoicePrintTemp/";
     
-    //AudioNameÂãÒôÆµÊı¾İÎÄ¼ş 
+    //AudioNameè£¸éŸ³é¢‘æ•°æ®æ–‡ä»¶ 
 
     private  String RawAudioName; 
 
-    //NewAudioName¿É²¥·ÅµÄÒôÆµÎÄ¼ş 
+    //NewAudioNameå¯æ’­æ”¾çš„éŸ³é¢‘æ–‡ä»¶ 
 
     private  String FinalAudioName;
     
@@ -125,10 +125,10 @@ public class AudioService {
     	//if(android.os.Build.VERSION.SDK_INT<11)
     	//	sampleRateInHz=8000;
     	
-        // »ñµÃ»º³åÇø×Ö½Ú´óĞ¡ 
+        // è·å¾—ç¼“å†²åŒºå­—èŠ‚å¤§å° 
         bufferSizeInBytes = AudioRecord.getMinBufferSize(sampleRateInHz, 
                 channelConfig, audioFormat); 
-        // ´´½¨AudioRecord¶ÔÏó 
+        // åˆ›å»ºAudioRecordå¯¹è±¡ 
         audioRecord = new AudioRecord(audioSource, sampleRateInHz, 
                 channelConfig, audioFormat, bufferSizeInBytes); 
         
@@ -141,9 +141,9 @@ public class AudioService {
     		creatAudioRecord();
     	
     	audioRecord.startRecording();                  
-    	// ÈÃÂ¼ÖÆ×´Ì¬Îªtrue                  
+    	// è®©å½•åˆ¶çŠ¶æ€ä¸ºtrue                  
     	isRecord = true;   
-    	// ¿ªÆôÒôÆµÎÄ¼şĞ´ÈëÏß³Ì
+    	// å¼€å¯éŸ³é¢‘æ–‡ä»¶å†™å…¥çº¿ç¨‹
     	try{
     		new Thread(new AudioRecordThread()).start(); 
     	}catch(Exception e){
@@ -158,9 +158,9 @@ public class AudioService {
     private void close() {  
         if (audioRecord != null) {  
             System.out.println("stopRecord");  
-            isRecord = false;//Í£Ö¹ÎÄ¼şĞ´Èë  
+            isRecord = false;//åœæ­¢æ–‡ä»¶å†™å…¥  
             audioRecord.stop();  
-            audioRecord.release();//ÊÍ·Å×ÊÔ´  
+            audioRecord.release();//é‡Šæ”¾èµ„æº  
             audioRecord = null;  
         }  
     }
@@ -169,8 +169,8 @@ public class AudioService {
         @Override 
         public void run() { 
         	try{
-	            writeDateTOFile();//ÍùÎÄ¼şÖĞĞ´ÈëÂãÊı¾İ 
-	            //copyWaveFile(RawAudioName, FinalAudioName);//¸øÂãÊı¾İ¼ÓÉÏÍ·ÎÄ¼ş 
+	            writeDateTOFile();//å¾€æ–‡ä»¶ä¸­å†™å…¥è£¸æ•°æ® 
+	            //copyWaveFile(RawAudioName, FinalAudioName);//ç»™è£¸æ•°æ®åŠ ä¸Šå¤´æ–‡ä»¶ 
         	}
         	catch(Exception e)
         	{
@@ -180,7 +180,7 @@ public class AudioService {
     } 
     
     private void writeDateTOFile() { 
-        // newÒ»¸öbyteÊı×éÓÃÀ´´æÒ»Ğ©×Ö½ÚÊı¾İ£¬´óĞ¡Îª»º³åÇø´óĞ¡ 
+        // newä¸€ä¸ªbyteæ•°ç»„ç”¨æ¥å­˜ä¸€äº›å­—èŠ‚æ•°æ®ï¼Œå¤§å°ä¸ºç¼“å†²åŒºå¤§å° 
     	// while (isRecord == true){
         byte[] audiodata = new byte[bufferSizeInBytes]; 
         FileOutputStream fos = null; 
@@ -191,7 +191,7 @@ public class AudioService {
             if (file.exists()) { 
                 file.delete(); 
             } 
-            fos = new FileOutputStream(file);// ½¨Á¢Ò»¸ö¿É´æÈ¡×Ö½ÚµÄÎÄ¼ş 
+            fos = new FileOutputStream(file);// å»ºç«‹ä¸€ä¸ªå¯å­˜å–å­—èŠ‚çš„æ–‡ä»¶ 
         } catch (Exception e) { 
             e.printStackTrace(); 
         } 
@@ -218,14 +218,14 @@ public class AudioService {
             
         } 
         try { 
-            fos.close();// ¹Ø±ÕĞ´ÈëÁ÷ 
+            fos.close();// å…³é—­å†™å…¥æµ 
         } catch (IOException e) { 
             e.printStackTrace(); 
         } 
     	// }
     }   
    
-    // ÕâÀïµÃµ½¿É²¥·ÅµÄÒôÆµÎÄ¼ş 
+    // è¿™é‡Œå¾—åˆ°å¯æ’­æ”¾çš„éŸ³é¢‘æ–‡ä»¶ 
     private void copyWaveFile(String inFilename, String outFilename) { 
         FileInputStream in = null; 
         FileOutputStream out = null; 
@@ -255,10 +255,10 @@ public class AudioService {
     } 
    
     /** 
-     * ÕâÀïÌá¹©Ò»¸öÍ·ĞÅÏ¢¡£²åÈëÕâĞ©ĞÅÏ¢¾Í¿ÉÒÔµÃµ½¿ÉÒÔ²¥·ÅµÄÎÄ¼ş¡£ 
-     * ÎªÎÒÎªÉ¶²åÈëÕâ44¸ö×Ö½Ú£¬Õâ¸ö»¹ÕæÃ»ÉîÈëÑĞ¾¿£¬²»¹ıÄãËæ±ã´ò¿ªÒ»¸öwav 
-     * ÒôÆµµÄÎÄ¼ş£¬¿ÉÒÔ·¢ÏÖÇ°ÃæµÄÍ·ÎÄ¼ş¿ÉÒÔËµ»ù±¾Ò»ÑùÅ¶¡£Ã¿ÖÖ¸ñÊ½µÄÎÄ¼ş¶¼ÓĞ 
-     * ×Ô¼ºÌØÓĞµÄÍ·ÎÄ¼ş¡£ 
+     * è¿™é‡Œæä¾›ä¸€ä¸ªå¤´ä¿¡æ¯ã€‚æ’å…¥è¿™äº›ä¿¡æ¯å°±å¯ä»¥å¾—åˆ°å¯ä»¥æ’­æ”¾çš„æ–‡ä»¶ã€‚ 
+     * ä¸ºæˆ‘ä¸ºå•¥æ’å…¥è¿™44ä¸ªå­—èŠ‚ï¼Œè¿™ä¸ªè¿˜çœŸæ²¡æ·±å…¥ç ”ç©¶ï¼Œä¸è¿‡ä½ éšä¾¿æ‰“å¼€ä¸€ä¸ªwav 
+     * éŸ³é¢‘çš„æ–‡ä»¶ï¼Œå¯ä»¥å‘ç°å‰é¢çš„å¤´æ–‡ä»¶å¯ä»¥è¯´åŸºæœ¬ä¸€æ ·å“¦ã€‚æ¯ç§æ ¼å¼çš„æ–‡ä»¶éƒ½æœ‰ 
+     * è‡ªå·±ç‰¹æœ‰çš„å¤´æ–‡ä»¶ã€‚ 
      */ 
     private void WriteWaveFileHeader(FileOutputStream out, long totalAudioLen,  
             long totalDataLen, long longSampleRate, int channels, long byteRate)  
@@ -312,7 +312,7 @@ public class AudioService {
     }  
     
     
-  //¶ÁÈ¡Â¼ÒôÎÄ¼ş
+  //è¯»å–å½•éŸ³æ–‡ä»¶
   	public  byte[] readWavform(String filename) {
   		int regLen = 0;	
   		byte[] regbuffer = null;

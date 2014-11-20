@@ -3,13 +3,13 @@ package com.kuaishangtong.service;
 import com.kuaishangtong.model.VPRError;
 
 public interface RecorderListener {
-	// Â¼Òô¿ªÊ¼Ê±µ÷ÓÃ
+	// å½•éŸ³å¼€å§‹æ—¶è°ƒç”¨
 	public void onRecordBegin();
-	// ·µ»ØÊµÊ±Â¼ÒôÒôÁ¿£¬soundÎªÒôÁ¿´óĞ¡
+	// è¿”å›å®æ—¶å½•éŸ³éŸ³é‡ï¼Œsoundä¸ºéŸ³é‡å¤§å°
 	public void onSoundChanged(float sound);
-	// Â¼Òô½áÊøÊ±µ÷ÓÃ
+	// å½•éŸ³ç»“æŸæ—¶è°ƒç”¨
 	public void onRecordEnd();
-	// Â¼ÒôÒì³£Ê±µ÷ÓÃ
+	// å½•éŸ³å¼‚å¸¸æ—¶è°ƒç”¨
 	public void onRecordError(VPRError error);
 	
 }
