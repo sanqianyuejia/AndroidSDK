@@ -134,6 +134,9 @@ public class VPRService {
 		aservice.setVoiceFile(person.getName()+stepNum);
 		try{
 			this.recordListener.onRecordBegin();
+			if(this.aservice.getRecordStatus()){
+				return;
+			}
 			this.aservice.startRecordAndFile();
 			Thread valueThread=null;
 			valueThread=new Thread(new ValueThread());
@@ -150,6 +153,9 @@ public class VPRService {
 	public void stopRecord(){
 		try{
 			IsRun=false;
+			if(!this.aservice.getRecordStatus()){
+				return;
+			}
 			this.aservice.stopRecordAndFile();
 			this.recordListener.onRecordEnd();
 		}catch(Exception e)
@@ -272,8 +278,12 @@ public class VPRService {
 			switch(msg.what){
 			case 1:
 				voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
-				if(stepNum>1){
-					voiceListener.onFlowStepChanged(stepNum,statusNum,getKeyString());
+				if(stepNum>1 && mode==REGISTER){
+					if(stepNum==statusNum){
+						error.setErrorParam(0, "用户声纹信息已登记完毕");
+					}else{
+						voiceListener.onFlowStepChanged(stepNum,statusNum,getKeyString());
+					}
 				}
 				break;
 			case 0:

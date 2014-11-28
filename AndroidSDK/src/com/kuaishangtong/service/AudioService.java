@@ -114,6 +114,17 @@ public class AudioService {
     	return this.averageAbsValue;
     }
     
+    public boolean getRecordStatus(){
+    	if(audioRecord==null)
+    		return false;
+    	else{
+    		if(audioRecord.getRecordingState()==AudioRecord.RECORDSTATE_RECORDING)
+    			return true;
+    		else
+    			return false;		
+    	}
+    }
+    
     public void setAudioPermission()
     {
     	this.creatAudioRecord();
