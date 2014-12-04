@@ -158,7 +158,7 @@ public class Client extends Object {
 			VerifyRes res) {
 		int ret = Constants.RETURN_SUCCESS;
 
-		if (!person.getId().isEmpty()) {
+		if (!person.getId().isEmpty()){
 			JSONObject result = getClientService().clientVerifyVoiceprint(
 					person.getId(), person.getName(), speech.getCodec(), speech.getSampleRate(),
 					speech.getVerify(), speech.getRule(), speech.getData(), person.getPassType());

@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import android.os.Handler;
@@ -107,6 +109,81 @@ public class VPRService {
 		this.recordListener=recorderListener;
 	}
 	
+	private List<Person> personList;
+	private int limit;
+	private String groupid;
+	
+	public List<Person> getPersonGroup(int limit,String groupid){
+		if(client == null)
+		{
+			Log.d("getPersonGroup","client is null");
+			return personList;
+		}
+		this.personList = null;
+		this.limit=limit;
+		this.groupid=groupid;
+		
+		Thread groupThread=null;
+		groupThread=new Thread(new GroupThread());
+		
+		paused=false;
+		groupThread.start();
+		
+		while(personList == null);
+		
+		return personList;
+	}
+	
+	private Person people;
+	
+	public void deletePerson(Person person){
+		if(person == null){
+			Log.d("deletePerson","person is null");
+			return;
+		}
+		
+		this.people=person;
+		
+		Thread deleteThread=null;
+		deleteThread=new Thread(new DeleteThread());
+		
+		paused=false;
+		deleteThread.start();
+	} 
+	
+	private class GroupThread implements Runnable{
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			if(!paused){
+				try{
+					personList=client.getGroup(limit, groupid);
+				}catch(Exception e){
+					Log.d("getPersonGroupError",e.getMessage());
+				}
+			}
+		}	
+	}
+	
+	private class DeleteThread implements Runnable{
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			if(!paused){
+					Person person = new Person(client, people.getId(), people.getName());         
+				try{
+					if ((ret = person.delete()) != Constants.RETURN_SUCCESS) {	
+						Log.d("Delete Person",person.getLastErr()+":"+String.valueOf(ret));			
+					}
+				}
+				catch(Exception e)
+				{
+					Log.d("deletePersonError",e.getMessage());
+				}
+			}
+		}	
+	}
+	
 	//获取实时音量线程
 	private boolean IsRun=false;
 	private class ValueThread implements Runnable{
@@ -116,7 +193,7 @@ public class VPRService {
 			error.setErrorCode(-1);
 			while(IsRun){
 				try {
-					//Thread.sleep(10);
+					Thread.sleep(100);
 					recordListener.onSoundChanged(getRecordValue());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -279,8 +356,9 @@ public class VPRService {
 			case 1:
 				voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
 				if(stepNum>1 && mode==REGISTER){
-					if(stepNum==statusNum){
+					if(person.getFlag()){
 						error.setErrorParam(0, "用户声纹信息已登记完毕");
+						voiceListener.onServiceEnd(true,person,similar);
 					}else{
 						voiceListener.onFlowStepChanged(stepNum,statusNum,getKeyString());
 					}
@@ -444,6 +522,7 @@ public class VPRService {
 	//获取口令，不包括识别
 	private void getkeycode1(){
 		keyString="";
+	
 		if ((ret = person.getAuthCode()) != Constants.RETURN_SUCCESS) {
 			Log.d("person.getAuthCode",client.getLastErr()+":"+String.valueOf(ret));
 			error.setErrorParam(ret,client.getLastErr());
@@ -564,6 +643,9 @@ public class VPRService {
 		    	// Output result
 		    	Log.d("Output result",person.getId()+"\t"+person.getName()+": Register voiceprint success.");			    
 	    	}	
+    	}else{
+    		myres=3;
+    		error.setErrorParam(3002,"3002 | voiceprint already registered");
     	}
 
     	getkeycode1();

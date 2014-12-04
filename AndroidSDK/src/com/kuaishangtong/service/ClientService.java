@@ -2,6 +2,9 @@ package com.kuaishangtong.service;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import android.util.Log;
+
 import com.alibaba.fastjson.JSONObject;
 
 import com.kuaishangtong.utils.Constants;
@@ -17,7 +20,7 @@ public class ClientService extends BaseService {
 		
 		String tokenResult = HttpURLUtils.doPost(super.getClient().getServerString()+Constants.URL_SYSTEM_GETINFO, parameters);
 		JSONObject tokenJson = (JSONObject) JSONObject.parseObject(tokenResult);
-		
+		Log.i("reqUrl",super.getClient().getServerString()+Constants.URL_SYSTEM_GETINFO);
 		return tokenJson;
 	}
 	

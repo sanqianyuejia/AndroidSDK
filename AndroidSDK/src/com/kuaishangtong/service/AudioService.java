@@ -208,15 +208,8 @@ public class AudioService {
         } 
         while (isRecord == true) { 
             readsize = audioRecord.read(audiodata, 0, bufferSizeInBytes); 
-            if (AudioRecord.ERROR_INVALID_OPERATION != readsize) { 
-                try { 
-                    fos.write(audiodata); 
-                } catch (IOException e) { 
-                    e.printStackTrace(); 
-                } 
-            } 
             
-         // analyze sound    		
+//          analyze sound    		
             int totalAbsValue = 0;
             short sample = 0; 
 
@@ -226,6 +219,15 @@ public class AudioService {
                 totalAbsValue += Math.abs(sample);
             }
             averageAbsValue = totalAbsValue / bufferSizeInBytes / 2;
+            
+            
+            if (AudioRecord.ERROR_INVALID_OPERATION != readsize) { 
+                try { 
+                    fos.write(audiodata); 
+                } catch (IOException e) { 
+                    e.printStackTrace(); 
+                } 
+            } 
             
         } 
         try { 

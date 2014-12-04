@@ -4,6 +4,11 @@ public class Object {
 	private String err;
 	private int errcode;
 	
+	public Object(){
+		err="";
+		errcode=-1;
+	}
+	
 	public String getLastErr() {
 		return err;
 	}
