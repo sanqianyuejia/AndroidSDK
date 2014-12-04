@@ -15,14 +15,14 @@ import com.kuaishangtong.Object.Object;
 
 
 public class Person extends Object {
-	private Client client;
-	private String id;
-	private String name;
-	private String tag;
-	private String authcode;
-	private boolean flag;
-	private int step;
-	private int passtype;
+	private Client client = null;
+	private String id = "";
+	private String name = "";
+	private String tag = "";
+	private String authcode = "";
+	private boolean flag = false;
+	private int step = 0;
+	private int passtype = 0;
 	
 	private PersonService ps;
 	
