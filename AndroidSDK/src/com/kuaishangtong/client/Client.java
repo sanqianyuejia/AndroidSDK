@@ -14,12 +14,12 @@ import com.kuaishangtong.Object.Object;
 import com.kuaishangtong.client.VerifyRes;
 
 public class Client extends Object {
-	private String key;
-	private String secret;
-	private String version;
-	private int reg_steps;
-	private int ver_steps;
-	private String server;
+	private String key = "";
+	private String secret = "";
+	private String version = "";
+	private int reg_steps = 0;
+	private int ver_steps = 0;
+	private String server = "";
 
 	private ClientService cs;
 
@@ -158,7 +158,7 @@ public class Client extends Object {
 			VerifyRes res) {
 		int ret = Constants.RETURN_SUCCESS;
 
-		if (!person.getId().isEmpty()) {
+		if (!person.getId().isEmpty()){
 			JSONObject result = getClientService().clientVerifyVoiceprint(
 					person.getId(), person.getName(), speech.getCodec(), speech.getSampleRate(),
 					speech.getVerify(), speech.getRule(), speech.getData(), person.getPassType());

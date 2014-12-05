@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import android.os.Handler;
@@ -107,6 +109,61 @@ public class VPRService {
 		this.recordListener=recorderListener;
 	}
 	
+	
+	public List<Person> getPersonGroup(int limit,String groupid){
+		if(client == null)
+		{
+			Log.d("getPersonGroup","client is null");
+			return new ArrayList<Person>();
+		}
+		
+		PersonOp personOp = new PersonOp(client);
+		return personOp.getPersonGroup(limit, groupid);
+	}
+	
+	public boolean personExist(String groupId,String userName){
+		if(client == null)
+		{
+			Log.d("personExist","client is null");
+			return false;
+		}
+		
+		PersonOp personOp = new PersonOp(client);
+		return personOp.personExist(groupId, userName);
+	}
+	
+	
+	public boolean deletePerson(String groupId,String userName){
+		if(client == null){
+			Log.d("deletePerson","client is null");
+			return false;
+		}
+		
+		PersonOp personOp = new PersonOp(client);
+		return personOp.deletePerson(groupId, userName);
+	} 
+	
+	public Person getPersonInfo(String groupId,String userName){
+		if(client == null){
+			Log.d("getPersonInfo","client is null");
+			return null;
+		}
+		
+		PersonOp personOp = new PersonOp(client);
+		return personOp.getPersonInfo(groupId, userName);
+	}
+	
+	public boolean setPersonInfo(String groupId,String userName,String tag){
+		if(client == null){
+			Log.d("setPersonInfo","client is null");
+			return false;
+		}
+		
+		PersonOp personOp = new PersonOp(client);
+		return personOp.setPersonInfo(groupId, userName, tag);
+	}
+	
+	
 	//获取实时音量线程
 	private boolean IsRun=false;
 	private class ValueThread implements Runnable{
@@ -116,7 +173,7 @@ public class VPRService {
 			error.setErrorCode(-1);
 			while(IsRun){
 				try {
-					//Thread.sleep(10);
+					Thread.sleep(100);
 					recordListener.onSoundChanged(getRecordValue());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
@@ -170,8 +227,23 @@ public class VPRService {
 		return this.aservice.getAverageAbsValue();
 	}
 	
+	 public boolean checkServiceStatus(){
+        if(this.client == null || this.person == null){
+//            this.voiceListener.onServiceInit(false,this.stepNum,this.statusNum,this.keyString);
+            this.error.setErrorParam(0,"服务参数未设置");
+            this.voiceListener.onServiceError(error);
+            
+            return false;
+        }
+        return true;
+    }
+	
 	//调用重置服务模式
 	public void resetService(int serviceMode){
+		if(!checkServiceStatus()){
+            return;
+        }
+		
 		this.mode=serviceMode;
 		this.setAudioSerivce();
 		
@@ -213,11 +285,11 @@ public class VPRService {
 			if(!paused){
 				Message msg =new Message();
 				try{
-					resetMode();
 					
 					msg.what=1;
 					switch (mode){
 						case REGISTER:
+							resetPerson();
 							initRegister();
 							break;
 						case VERIFY:
@@ -232,15 +304,15 @@ public class VPRService {
 				}catch(RuntimeException e){
 					msg.what=0;
 					error.setErrorParam(0, e.getMessage());
-					//throw new RuntimeException(e.getMessage(), e);
 				}
-				resetHandler.sendMessage(msg);
+//				resetHandler.sendMessage(msg);
+				initHandler.sendMessage(msg);
 			}
 		}
 	}
 	
 	//重置服务模式
-	private void resetMode(){
+	private void resetPerson(){
 		//Delete Person				
 		if ((ret = person.delete()) != Constants.RETURN_SUCCESS) {	
 			Log.d("Delete Person",person.getLastErr()+":"+String.valueOf(ret));
@@ -258,6 +330,10 @@ public class VPRService {
 	
 	//调用初始化服务
 	public void initService(int serviceMode){
+		if(!checkServiceStatus()){
+            return;
+        }
+		
 		this.mode=serviceMode;
 		this.setAudioSerivce();
 		
@@ -277,13 +353,46 @@ public class VPRService {
 			super.handleMessage(msg);
 			switch(msg.what){
 			case 1:
-				voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
-				if(stepNum>1 && mode==REGISTER){
-					if(stepNum==statusNum){
-						error.setErrorParam(0, "用户声纹信息已登记完毕");
+//				voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
+//				if(stepNum>1 && mode==REGISTER){
+//					if(person.getFlag()){
+//						error.setErrorParam(0, "用户声纹信息已登记完毕");
+//						voiceListener.onServiceEnd(true,person,similar);
+//					}else{
+//						voiceListener.onFlowStepChanged(stepNum,statusNum,getKeyString());
+//					}
+//				}
+				
+				switch (mode){
+				case REGISTER:
+					if(person.getFlag()){
+						voiceListener.onServiceInit(false,stepNum, statusNum, getKeyString());
+						error.setErrorParam(3002, "3002 | voiceprint already registered");
 					}else{
-						voiceListener.onFlowStepChanged(stepNum,statusNum,getKeyString());
+						voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
+						if(stepNum>1)
+							voiceListener.onFlowStepChanged(stepNum,statusNum,getKeyString());
 					}
+					break;
+				case VERIFY:
+					if(ret == 2002){
+						voiceListener.onServiceInit(false,stepNum, statusNum, getKeyString());
+					}else{
+						if(person.getFlag()){
+							voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
+						}else{
+							voiceListener.onServiceInit(false,stepNum, statusNum, getKeyString());
+							error.setErrorParam(3005, "3005 | voiceprint not trained");
+						}
+					}
+					break;
+				case IDENTIFY:
+					voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
+					break;
+				default:
+					voiceListener.onServiceInit(false,stepNum, statusNum, getKeyString());
+					error.setErrorParam(0, "初始化服务模式参数错误");
+					break;
 				}
 				break;
 			case 0:
@@ -292,6 +401,7 @@ public class VPRService {
 			default:
 				break;
 			}
+			
 			if(error.getErrorCode()!=-1)
 				voiceListener.onServiceError(error);
 		}
@@ -351,6 +461,9 @@ public class VPRService {
 	//开始调用服务
 	private int modeResult;
 	public void startService(){
+		if(!checkServiceStatus()){
+            return;
+        }
 		
 		if(!this.setSpeechFile(aservice.getVoiceFile())){
 			error.setErrorParam(0, "SD卡里的录音文件出错");
@@ -444,6 +557,7 @@ public class VPRService {
 	//获取口令，不包括识别
 	private void getkeycode1(){
 		keyString="";
+	
 		if ((ret = person.getAuthCode()) != Constants.RETURN_SUCCESS) {
 			Log.d("person.getAuthCode",client.getLastErr()+":"+String.valueOf(ret));
 			error.setErrorParam(ret,client.getLastErr());
@@ -564,6 +678,9 @@ public class VPRService {
 		    	// Output result
 		    	Log.d("Output result",person.getId()+"\t"+person.getName()+": Register voiceprint success.");			    
 	    	}	
+    	}else{
+    		myres=2;
+    		error.setErrorParam(3002,"3002 | voiceprint already registered");
     	}
 
     	getkeycode1();

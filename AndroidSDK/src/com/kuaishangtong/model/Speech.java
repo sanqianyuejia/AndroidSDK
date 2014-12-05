@@ -1,16 +1,16 @@
 package com.kuaishangtong.model;
 
 public class Speech {
-	private String id;	// person id
+	private String id = "";	// person id
 	
-	private byte[] data;
-	private String md5;
-	private String asr;
-	private String codec;
-	private int sr;
-	private int size;
-	private boolean bverify;
-	private String rule;
+	private byte[] data = null;
+	private String md5 = "";
+	private String asr = "";
+	private String codec = "";
+	private int sr = 0;
+	private int size = 0;
+	private boolean bverify = false;
+	private String rule = "";
 	
 	public Speech() {
 		
