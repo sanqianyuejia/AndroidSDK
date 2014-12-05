@@ -23,7 +23,7 @@
 2. 参照example目录中的例子，编写应用程序
 3. 上线运营。上线之前，请联系管理员（lixm@shengwenyun.com）
 
-## 开发示例——注册说话人声纹
+## 开发示例——说话人声纹操作：登记、认证和识别
 
     //1.初始化
     private Client client=null;    
@@ -140,6 +140,34 @@
 
     //停止录音，并在它的回调函数onRecordEnd()中启动声纹服务vservice.startService()
     vservice.stopRecord();
+    
+## 开发示例——说话人操作
+    
+        //1.初始化
+    private Client client=null;    
+    private VPRService vservice=null;
+    
+    //初始化
+    client = new Client(clientKey,clientSecret);
+    client.setServer(serverHost,serverPort,serverVersion);
+    // 获取服务实例
+    this.vservice=VPRService.getInstance();
+    // 设置服务参数，(进行说话人操作时，必须先设置client参数)
+    this.vservice.setServiceParam(client, null, null);
+    
+    //以下为说话人操作
+    //获取群组内所登记和未登记声纹的说话人信息，当结果为空时，返回空集
+    List<person>=this.vservice.getPersonGroup(limit,groupId);
+    //查询说话人是否在该群组内存在
+    boolean exist=this.vservice.personExist(groupId,userName);
+    //删除说话人信息及其声纹信息
+    boolean delete=this.vservice.deletePerson(groupId,userName);
+    //查询说话人信息，当结果为空时，返回null
+    Person person=this.vservice.getPersonInfo(groupId,userName);
+    //设置说话人信息
+    Person item = new Person(client,gropId,userName);
+    item.setTag(msg);
+    boolean setinfo=this.vservice.setPersonInfo(item);
 
 ## 错误代码对照表
 <table cellpadding="0" cellspacing="1" border="0" style="width:100%" class="tableborder">
