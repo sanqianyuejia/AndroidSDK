@@ -202,12 +202,15 @@ public class VPRService {
 			return null;
 	}
 	
-	public boolean setPersonInfo(Person person){
-		if(person == null){
-			Log.d("setPersonInfo","person is null");
+	public boolean setPersonInfo(String groupId,String userName,String tag){
+		if(client == null){
+			Log.d("setPersonInfo","client is null");
 			return false;
 		}
-		this.people = person;
+		
+		this.people = new Person(client, groupId, userName);
+		this.people.setTag(tag);
+		
 		this.ret = -1;
 		Thread setInfoThread=null;
 		setInfoThread=new Thread(new SetInfoThread());
