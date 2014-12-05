@@ -151,7 +151,7 @@
     
 ## 开发示例——说话人操作
     
-        //1.初始化
+    //1.初始化
     private Client client=null;    
     private VPRService vservice=null;
     
