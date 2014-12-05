@@ -109,29 +109,16 @@ public class VPRService {
 		this.recordListener=recorderListener;
 	}
 	
-	private List<Person> personList;
-	private int limit;
-	private String groupid;
 	
 	public List<Person> getPersonGroup(int limit,String groupid){
 		if(client == null)
 		{
 			Log.d("getPersonGroup","client is null");
-			return personList;
+			return new ArrayList<Person>();
 		}
-		this.personList = null;
-		this.limit=limit;
-		this.groupid=groupid;
 		
-		Thread groupThread=null;
-		groupThread=new Thread(new GroupThread());
-		
-		paused=false;
-		groupThread.start();
-		
-		while(personList == null);
-		
-		return personList;
+		PersonOp personOp = new PersonOp(client);
+		return personOp.getPersonGroup(limit, groupid);
 	}
 	
 	public boolean personExist(String groupId,String userName){
@@ -140,23 +127,11 @@ public class VPRService {
 			Log.d("personExist","client is null");
 			return false;
 		}
-		this.people=new Person(client, groupId, userName);
-		this.ret = -1;
 		
-		Thread existThread=null;
-		existThread=new Thread(new GetInfoThread());
-		
-		paused=false;
-		existThread.start();
-		
-		while(ret == -1);
-		if(ret == Constants.RETURN_SUCCESS)
-			return true;
-		else
-			return false;
+		PersonOp personOp = new PersonOp(client);
+		return personOp.personExist(groupId, userName);
 	}
 	
-	private Person people;
 	
 	public boolean deletePerson(String groupId,String userName){
 		if(client == null){
@@ -164,20 +139,8 @@ public class VPRService {
 			return false;
 		}
 		
-		this.people=new Person(client, groupId, userName);
-		this.ret=-1;
-		
-		Thread deleteThread=null;
-		deleteThread=new Thread(new DeleteThread());
-		
-		paused=false;
-		deleteThread.start();
-		
-		while(ret == -1);
-		if(ret == Constants.RETURN_SUCCESS)
-			return true;
-		else
-			return false;
+		PersonOp personOp = new PersonOp(client);
+		return personOp.deletePerson(groupId, userName);
 	} 
 	
 	public Person getPersonInfo(String groupId,String userName){
@@ -186,20 +149,8 @@ public class VPRService {
 			return null;
 		}
 		
-		this.people=new Person(client, groupId, userName);
-		this.ret = -1;
-		
-		Thread getinfoThread=null;
-		getinfoThread=new Thread(new GetInfoThread());
-		
-		paused=false;
-		getinfoThread.start();
-		
-		while(ret == -1);
-		if(ret == Constants.RETURN_SUCCESS)
-			return this.people;
-		else
-			return null;
+		PersonOp personOp = new PersonOp(client);
+		return personOp.getPersonInfo(groupId, userName);
 	}
 	
 	public boolean setPersonInfo(String groupId,String userName,String tag){
@@ -208,89 +159,10 @@ public class VPRService {
 			return false;
 		}
 		
-		this.people = new Person(client, groupId, userName);
-		this.people.setTag(tag);
-		
-		this.ret = -1;
-		Thread setInfoThread=null;
-		setInfoThread=new Thread(new SetInfoThread());
-		
-		paused=false;
-		setInfoThread.start();
-		
-		while(ret == -1);
-		if(ret == Constants.RETURN_SUCCESS)
-			return true;
-		else
-			return false;
+		PersonOp personOp = new PersonOp(client);
+		return personOp.setPersonInfo(groupId, userName, tag);
 	}
 	
-	private class GroupThread implements Runnable{
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			if(!paused){
-				try{
-					personList=client.getGroup(limit, groupid);
-				}catch(Exception e){
-					Log.d("getPersonGroupError",e.getMessage());
-				}
-			}
-		}	
-	}
-	
-	private class GetInfoThread implements Runnable{
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			if(!paused){       
-				try{
-					if ( (ret = people.getInfo()) != Constants.RETURN_SUCCESS) {
-						Log.d("person.getInfo()",people.getLastErr()+":"+String.valueOf(ret));
-					}
-				}
-				catch(RuntimeException e)
-				{
-					Log.d("person.getInfo()/Error",e.getMessage());
-				}
-			}
-		}
-	}
-	
-	private class SetInfoThread implements Runnable{
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			if(!paused){
-				try{
-					if((ret=people.setInfo())!= Constants.RETURN_SUCCESS)
-					{
-						Log.d("person.setInfo()",people.getLastErr()+":"+String.valueOf(ret));	
-					}
-				}catch(Exception e){
-					Log.d("person.setInfo()/Error",e.getMessage());
-				}
-			}
-		}
-	}
-	
-	private class DeleteThread implements Runnable{
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			if(!paused){        
-				try{
-					if ((ret = people.delete()) != Constants.RETURN_SUCCESS) {	
-						Log.d("Delete Person",people.getLastErr()+":"+String.valueOf(ret));			
-					}
-				}
-				catch(RuntimeException e)
-				{
-					Log.d("deletePersonError",e.getMessage());
-				}
-			}
-		}	
-	}
 	
 	//获取实时音量线程
 	private boolean IsRun=false;
@@ -355,8 +227,23 @@ public class VPRService {
 		return this.aservice.getAverageAbsValue();
 	}
 	
+	 public boolean checkServiceStatus(){
+        if(this.client == null || this.person == null){
+//            this.voiceListener.onServiceInit(false,this.stepNum,this.statusNum,this.keyString);
+            this.error.setErrorParam(0,"服务参数未设置");
+            this.voiceListener.onServiceError(error);
+            
+            return false;
+        }
+        return true;
+    }
+	
 	//调用重置服务模式
 	public void resetService(int serviceMode){
+		if(!checkServiceStatus()){
+            return;
+        }
+		
 		this.mode=serviceMode;
 		this.setAudioSerivce();
 		
@@ -398,11 +285,11 @@ public class VPRService {
 			if(!paused){
 				Message msg =new Message();
 				try{
-					resetMode();
 					
 					msg.what=1;
 					switch (mode){
 						case REGISTER:
+							resetPerson();
 							initRegister();
 							break;
 						case VERIFY:
@@ -417,15 +304,15 @@ public class VPRService {
 				}catch(RuntimeException e){
 					msg.what=0;
 					error.setErrorParam(0, e.getMessage());
-					//throw new RuntimeException(e.getMessage(), e);
 				}
-				resetHandler.sendMessage(msg);
+//				resetHandler.sendMessage(msg);
+				initHandler.sendMessage(msg);
 			}
 		}
 	}
 	
 	//重置服务模式
-	private void resetMode(){
+	private void resetPerson(){
 		//Delete Person				
 		if ((ret = person.delete()) != Constants.RETURN_SUCCESS) {	
 			Log.d("Delete Person",person.getLastErr()+":"+String.valueOf(ret));
@@ -443,6 +330,10 @@ public class VPRService {
 	
 	//调用初始化服务
 	public void initService(int serviceMode){
+		if(!checkServiceStatus()){
+            return;
+        }
+		
 		this.mode=serviceMode;
 		this.setAudioSerivce();
 		
@@ -462,14 +353,46 @@ public class VPRService {
 			super.handleMessage(msg);
 			switch(msg.what){
 			case 1:
-				voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
-				if(stepNum>1 && mode==REGISTER){
+//				voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
+//				if(stepNum>1 && mode==REGISTER){
+//					if(person.getFlag()){
+//						error.setErrorParam(0, "用户声纹信息已登记完毕");
+//						voiceListener.onServiceEnd(true,person,similar);
+//					}else{
+//						voiceListener.onFlowStepChanged(stepNum,statusNum,getKeyString());
+//					}
+//				}
+				
+				switch (mode){
+				case REGISTER:
 					if(person.getFlag()){
-						error.setErrorParam(0, "用户声纹信息已登记完毕");
-						voiceListener.onServiceEnd(true,person,similar);
+						voiceListener.onServiceInit(false,stepNum, statusNum, getKeyString());
+						error.setErrorParam(3002, "3002 | voiceprint already registered");
 					}else{
-						voiceListener.onFlowStepChanged(stepNum,statusNum,getKeyString());
+						voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
+						if(stepNum>1)
+							voiceListener.onFlowStepChanged(stepNum,statusNum,getKeyString());
 					}
+					break;
+				case VERIFY:
+					if(ret == 2002){
+						voiceListener.onServiceInit(false,stepNum, statusNum, getKeyString());
+					}else{
+						if(person.getFlag()){
+							voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
+						}else{
+							voiceListener.onServiceInit(false,stepNum, statusNum, getKeyString());
+							error.setErrorParam(3005, "3005 | voiceprint not trained");
+						}
+					}
+					break;
+				case IDENTIFY:
+					voiceListener.onServiceInit(true,stepNum, statusNum, getKeyString());
+					break;
+				default:
+					voiceListener.onServiceInit(false,stepNum, statusNum, getKeyString());
+					error.setErrorParam(0, "初始化服务模式参数错误");
+					break;
 				}
 				break;
 			case 0:
@@ -478,6 +401,7 @@ public class VPRService {
 			default:
 				break;
 			}
+			
 			if(error.getErrorCode()!=-1)
 				voiceListener.onServiceError(error);
 		}
@@ -537,6 +461,9 @@ public class VPRService {
 	//开始调用服务
 	private int modeResult;
 	public void startService(){
+		if(!checkServiceStatus()){
+            return;
+        }
 		
 		if(!this.setSpeechFile(aservice.getVoiceFile())){
 			error.setErrorParam(0, "SD卡里的录音文件出错");
@@ -752,7 +679,7 @@ public class VPRService {
 		    	Log.d("Output result",person.getId()+"\t"+person.getName()+": Register voiceprint success.");			    
 	    	}	
     	}else{
-    		myres=3;
+    		myres=2;
     		error.setErrorParam(3002,"3002 | voiceprint already registered");
     	}
 
