@@ -53,7 +53,8 @@
     //设置声纹服务回调接口
     this.vservice.setVPRListener(vprListener);
 
-    // 初始化声纹服务，serviceMode可为VPRService.REGISTER、VPRService.VERIFY和VPRService.IDENTIFY
+    // 设置声纹服务模式，serviceMode可为VPRService.REGISTER、VPRService.VERIFY和VPRService.IDENTIFY
+    // 调用该方法会初始化声纹口令和声纹服务模式
     this.vservice.initService(serviceMode);
 
     //3.接口函数实现
@@ -65,6 +66,7 @@
         public void onServiceInit(boolean flag,int stepNum,int statusNum, String keyString) {
             //当flag为true，此处提示用户初始朗读的口令keyString和服务所需步数statusNum
             //（在VPRService.REGISTER服务模式下，可提示当前进度步数stepNum）
+            //当flag为false，可在onServiceError打印错误信息
         }
 
         @Override
@@ -141,6 +143,12 @@
     //停止录音，并在它的回调函数onRecordEnd()中启动声纹服务vservice.startService()
     vservice.stopRecord();
     
+    //5.其他操作
+    //主要用来在VPRService.REGISTER模式下会重新注册登记声纹信息
+    vservice.resetService(serviceMode);
+    //用来设置声纹服务中的person值，也可调用setServiceParam()方法
+    vservice.setPerson(person);
+    
 ## 开发示例——说话人操作
     
         //1.初始化
@@ -155,7 +163,7 @@
     // 设置服务参数，(进行说话人操作时，必须先设置client参数)
     this.vservice.setServiceParam(client, null, null);
     
-    //以下为说话人操作
+    //以下为说话人操作，(注意，以下方法会等待说话人操作的线程结束后才返回结果)
     //获取群组内所登记和未登记声纹的说话人信息，当结果为空时，返回空集
     List<person>=this.vservice.getPersonGroup(limit,groupId);
     //查询说话人是否在该群组内存在
@@ -165,9 +173,7 @@
     //查询说话人信息，当结果为空时，返回null
     Person person=this.vservice.getPersonInfo(groupId,userName);
     //设置说话人信息
-    Person item = new Person(client,gropId,userName);
-    item.setTag(msg);
-    boolean setinfo=this.vservice.setPersonInfo(item);
+    boolean setinfo=this.vservice.setPersonInfo(gropId,userName,tag);
 
 ## 错误代码对照表
 <table cellpadding="0" cellspacing="1" border="0" style="width:100%" class="tableborder">
