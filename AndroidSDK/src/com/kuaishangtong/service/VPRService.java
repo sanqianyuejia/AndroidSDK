@@ -134,22 +134,93 @@ public class VPRService {
 		return personList;
 	}
 	
+	public boolean personExist(String groupId,String userName){
+		if(client == null)
+		{
+			Log.d("personExist","client is null");
+			return false;
+		}
+		this.people=new Person(client, groupId, userName);
+		this.ret = -1;
+		
+		Thread existThread=null;
+		existThread=new Thread(new GetInfoThread());
+		
+		paused=false;
+		existThread.start();
+		
+		while(ret == -1);
+		if(ret == Constants.RETURN_SUCCESS)
+			return true;
+		else
+			return false;
+	}
+	
 	private Person people;
 	
-	public void deletePerson(Person person){
-		if(person == null){
-			Log.d("deletePerson","person is null");
-			return;
+	public boolean deletePerson(String groupId,String userName){
+		if(client == null){
+			Log.d("deletePerson","client is null");
+			return false;
 		}
 		
-		this.people=person;
+		this.people=new Person(client, groupId, userName);
+		this.ret=-1;
 		
 		Thread deleteThread=null;
 		deleteThread=new Thread(new DeleteThread());
 		
 		paused=false;
 		deleteThread.start();
+		
+		while(ret == -1);
+		if(ret == Constants.RETURN_SUCCESS)
+			return true;
+		else
+			return false;
 	} 
+	
+	public Person getPersonInfo(String groupId,String userName){
+		if(client == null){
+			Log.d("getPersonInfo","client is null");
+			return null;
+		}
+		
+		this.people=new Person(client, groupId, userName);
+		this.ret = -1;
+		
+		Thread getinfoThread=null;
+		getinfoThread=new Thread(new GetInfoThread());
+		
+		paused=false;
+		getinfoThread.start();
+		
+		while(ret == -1);
+		if(ret == Constants.RETURN_SUCCESS)
+			return this.people;
+		else
+			return null;
+	}
+	
+	public boolean setPersonInfo(Person person){
+		if(person == null){
+			Log.d("setPersonInfo","person is null");
+			return false;
+		}
+		this.people = person;
+		this.ret = -1;
+		Thread setInfoThread=null;
+		setInfoThread=new Thread(new SetInfoThread());
+		
+		paused=false;
+		setInfoThread.start();
+		
+		while(ret == -1);
+		if(ret == Constants.RETURN_SUCCESS)
+			return true;
+		else
+			return false;
+	}
 	
 	private class GroupThread implements Runnable{
 		@Override
@@ -165,18 +236,52 @@ public class VPRService {
 		}	
 	}
 	
-	private class DeleteThread implements Runnable{
+	private class GetInfoThread implements Runnable{
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			if(!paused){       
+				try{
+					if ( (ret = people.getInfo()) != Constants.RETURN_SUCCESS) {
+						Log.d("person.getInfo()",people.getLastErr()+":"+String.valueOf(ret));
+					}
+				}
+				catch(RuntimeException e)
+				{
+					Log.d("person.getInfo()/Error",e.getMessage());
+				}
+			}
+		}
+	}
+	
+	private class SetInfoThread implements Runnable{
 		@Override
 		public void run() {
 			// TODO Auto-generated method stub
 			if(!paused){
-					Person person = new Person(client, people.getId(), people.getName());         
 				try{
-					if ((ret = person.delete()) != Constants.RETURN_SUCCESS) {	
-						Log.d("Delete Person",person.getLastErr()+":"+String.valueOf(ret));			
+					if((ret=people.setInfo())!= Constants.RETURN_SUCCESS)
+					{
+						Log.d("person.setInfo()",people.getLastErr()+":"+String.valueOf(ret));	
+					}
+				}catch(Exception e){
+					Log.d("person.setInfo()/Error",e.getMessage());
+				}
+			}
+		}
+	}
+	
+	private class DeleteThread implements Runnable{
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			if(!paused){        
+				try{
+					if ((ret = people.delete()) != Constants.RETURN_SUCCESS) {	
+						Log.d("Delete Person",people.getLastErr()+":"+String.valueOf(ret));			
 					}
 				}
-				catch(Exception e)
+				catch(RuntimeException e)
 				{
 					Log.d("deletePersonError",e.getMessage());
 				}
